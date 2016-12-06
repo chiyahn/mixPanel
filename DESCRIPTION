@@ -1,0 +1,11 @@
+Package: mixPanel
+Type: Package
+Title: R package for mixture dynamic panel models
+Version: 0.1
+Date: 2016-12-05
+Author: Chiyoung Ahn
+Maintainer: Chiyoung Ahn <chiyahn@alumni.ubc.ca>
+Description: R package for parametric finite mixture dynamic panel models (MDP).
+License: GPL (>= 2)
+Imports:  Rcpp (>= 0.12.5), testthat
+RoxygenNote: 5.0.1
