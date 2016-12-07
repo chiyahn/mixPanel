@@ -98,11 +98,12 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
   mu <- as.matrix(theta$mu)
   sigma <- as.matrix(theta$sigma)
   rho <- matrix(rep(0,M), ncol = M)
-  if (!is.null(theta$rho))
-    beta <- as.matrix(theta$rho)
   beta <- matrix(rep(0,M), ncol = M)
   gamma <- as.matrix(0)
-
+  
+  if (!is.null(theta$rho))
+    rho <- as.matrix(theta$rho)
+  
   s <- nrow(rho)
   p <- 1
   q <- 1
@@ -172,7 +173,7 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
     x.block <- matrix(x[,x.block.first:(x.block.first + p - 1)], ncol = p)
     z.block <- matrix(z[,z.block.first:(z.block.first + q - 1)], ncol = q)
     for (t in initial.index:last.index)
-      y[t,i] <- rnorm(mu[component,1], sd=sigma[component,1]) +
+      y[t,i] <- rnorm(1, mu[component,1], sd=sigma[component,1]) +
         t(rev(y[(t-s):(t-1),i])) %*% as.numeric(rho[,component]) +
         x.block[t,] %*% as.matrix(beta[,component]) +
         z.block[t,] %*% as.matrix(gamma)
@@ -182,19 +183,15 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
                  log.likelihood = 1,
                  aic = Inf, bic = Inf,
                  components = components,
-                 M = M,
-                 s = s,
-                 q = q,
-                 p = p,
                  label = "MDP.model")
 
-  lagged.and.sample <- GetLaggedAndSample(y, s)
-  y.sample <- lagged.and.sample$y.sample
-  y.lagged <- lagged.and.sample$y.lagged
+  lagged.and.sample <- apply(y, 2, GetLaggedAndSample, s)
+  y.sample <- sapply(lagged.and.sample, "[[", "y.sample")
+  y.lagged <- matrix(sapply(lagged.and.sample, "[[", "y.lagged"), nrow = T)
 
   return (list(y = y,
                y.sample = y.sample,
                y.lagged = y.lagged,
-               states = states[initial.index:length(states)],
-               MDP.model = MDP.model))
+               components = components,
+               MDP.model = model))
 }
