@@ -1,8 +1,8 @@
 #' @description Returns a valid list that represents parameters of a random MS-AR model with
 #' non-switching beta and switching sigma; ideal for creating a sample for testing.
 #' @export
-#' @title GenerateMDPModel
-#' @name GenerateMDPModel
+#' @title GenerateMDPTheta
+#' @name GenerateMDPTheta
 #' @param M The number of components.
 #' @param s The number of terms used for AR(s)
 #' @param p The dimension of regressors that depend on components.
@@ -16,7 +16,7 @@
 #' coefficients for state-independent exogenous variables}
 #' \item{mu}{M by 1 column that contains state-dependent mu}
 #' \item{sigma}{M by 1 column that contains state-dependent sigma}
-GenerateMDPModel <- function(M = 2, s = 0, p = 0, q = 0)
+GenerateMDPTheta <- function(M = 2, s = 0, p = 0, q = 0)
 {
   alpha <- runif(M)
   alpha <- alpha / sum(alpha)
@@ -85,7 +85,7 @@ GenerateMDPModel <- function(M = 2, s = 0, p = 0, q = 0)
 #' used to create the sample.}
 #' @examples
 #' GenerateMDPSample()
-#' theta <- GenerateMDPModel(M = 2, s = 3)
+#' theta <- GenerateMDPTheta(M = 2, s = 3)
 #' GenerateMDPSample(theta)
 #' GenerateMDPSample(theta, N = 200)
 GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
@@ -93,7 +93,7 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
                            x = NULL, z = NULL)
 {
   if (is.null(theta))
-    theta <- GenerateMDPModel()
+    theta <- GenerateMDPTheta()
   M <- length(theta$alpha)
   mu <- as.matrix(theta$mu)
   sigma <- as.matrix(theta$sigma)
@@ -180,6 +180,7 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
   }
 
   model <- list(theta = theta,
+                y = y,
                  log.likelihood = 1,
                  aic = Inf, bic = Inf,
                  components = components,
