@@ -25,14 +25,15 @@ PlotMDPModel <- function (mdp.model, separate = FALSE) {
   
   
   if (!separate)
-    return (ggplot(y.df, aes(x = t, y = y, group = id, color = component)) +
+    return (ggplot2::ggplot(y.df, aes(x = t, y = y, 
+                                      group = id, color = component)) +
       geom_point(size = 2) +
       geom_line(size = 1.2, alpha = 0.5))
   
   
-  ggplot(y.df, aes(x = t, y = y, group = id)) +
+  ggplot2::ggplot(y.df, aes(x = t, y = y, group = id, color = id)) +
     geom_point(size = 2) +
-    geom_line(size = 1.2, alpha = 0.5, aes(shape = id)) +
+    geom_line(size = 1.2, alpha = 0.5) +
     facet_wrap(~component,
-               nrow = 1)
+               nrow = 1) + guides(color=FALSE)
 }
