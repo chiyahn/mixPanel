@@ -1,10 +1,12 @@
-mixPanel
+mixPanel 
 ============================================
 by Chiyoung Ahn
 
+<img src = "https://raw.githubusercontent.com/chiyahn/mixPanel/master/vignettes/plot02.png" />
+
 Overview
 --------
-mixPanel is an R package for estimation of parametric finite mixture linear dynamic panel models.
+mixPanel is an R package for robust and dynamic estimation of parametric finite mixture linear dynamic panel models.
 
 Installing mixPanel
 ------------
