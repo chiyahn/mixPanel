@@ -20,17 +20,18 @@ PlotMDPModel <- function (mdp.model, separate = FALSE) {
                               component = as.factor(mdp.model$components),
                               y.transposed), 
                         id = c('id', 'component'))
+  # relabel component
+  y.df$component <- as.factor(sapply(y.df$component, 
+                                     function (x) paste("Component", x)))
   colnames(y.df)[colnames(y.df)=='value'] <- 'y'
   colnames(y.df)[colnames(y.df)=='variable'] <- 't'
-  
   
   if (!separate)
     return (ggplot2::ggplot(y.df, aes(x = t, y = y, 
                                       group = id, color = component)) +
       geom_point(size = 2) +
       geom_line(size = 1.2, alpha = 0.5))
-  
-  
+
   ggplot2::ggplot(y.df, aes(x = t, y = y, group = id, color = id)) +
     geom_point(size = 2) +
     geom_line(size = 1.2, alpha = 0.5) +
