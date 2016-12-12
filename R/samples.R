@@ -188,6 +188,8 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
   
   s <- ifelse(is.null(theta$rho), 0, nrow(theta$rho)) # take original rho back
 
+  if (!(s > 0))
+    y <- y[2:nrow(y),]
   lagged.and.sample <- apply(y, 2, GetLaggedAndSample, s)
   y.sample <- sapply(lagged.and.sample, "[[", "y.sample")
   y.lagged <- matrix(sapply(lagged.and.sample, "[[", "y.lagged"), nrow = T)
