@@ -8,7 +8,7 @@ test_that("LikelihoodMDP", {
   N.fixed <- 30
   T.fixed <- 20
   p <- 2
-  q <- 2
+  q <- 3
   x <- matrix(runif(T.fixed * N.fixed * p), nrow = T.fixed)
   z <- matrix(runif(T.fixed * N.fixed * q, 1, 3), nrow = T.fixed)
   x.empty <- matrix(0, nrow = T.fixed, ncol = N.fixed) # for p = 0 case
