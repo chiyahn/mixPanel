@@ -185,6 +185,8 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
                  aic = Inf, bic = Inf,
                  components = components,
                  label = "MDP.model")
+  
+  s <- ifelse(is.null(theta$rho), 0, nrow(theta$rho)) # take original rho back
 
   lagged.and.sample <- apply(y, 2, GetLaggedAndSample, s)
   y.sample <- sapply(lagged.and.sample, "[[", "y.sample")

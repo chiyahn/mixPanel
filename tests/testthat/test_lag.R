@@ -18,4 +18,8 @@ test_that("GetLaggedAndSample", {
   expect_equal((lag.and.sample$y.lagged)[,1], 3:4)
   expect_equal((lag.and.sample$y.lagged)[,2], 2:3)
   expect_equal((lag.and.sample$y.lagged)[,3], 1:2)
+  
+  lag.and.sample <- GetLaggedAndSample(y = 1:5, s = 0)
+  expect_equal(lag.and.sample$y.sample, as.matrix(1:5))
+  expect_equal((lag.and.sample$y.lagged)[,1], rep(0,5))
 })

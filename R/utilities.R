@@ -11,7 +11,10 @@ GetLaggedAndSample <- function(y, s)
   y <- as.numeric(y)
   y.lagged <- sapply(seq(0,s), GetLaggedColumn, y, s) # (n-s) by s matrix
   y.sample <- as.matrix(y.lagged[,1])
-  y.lagged <- as.matrix(y.lagged[,-1])
+  if (s > 0)
+    y.lagged <- as.matrix(y.lagged[,-1])
+  else
+    y.lagged <- matrix(0,ncol=1,nrow=length(y))
   return (list (y.lagged = y.lagged, y.sample = y.sample))
 }
 
