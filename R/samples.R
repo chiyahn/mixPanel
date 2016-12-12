@@ -162,10 +162,11 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
   trans.cumsum <- cumsum(theta$alpha)
   components <- rep(1, N)
   probs <- runif(N)
-  for (j in 2:M)
-    for (i in 1:N)
-      if (probs[i] > trans.cumsum[j-1] && probs[i] <= trans.cumsum[j])
-        components [i] <- j
+  if (M > 1)
+    for (j in 2:M)
+      for (i in 1:N)
+        if (probs[i] > trans.cumsum[j-1] && probs[i] <= trans.cumsum[j])
+          components [i] <- j
 
   initial.index <- nrow(initial.y.set) + 1
   last.index <- nrow(initial.y.set) + T
