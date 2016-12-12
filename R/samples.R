@@ -128,9 +128,11 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
       stop("EXCEPTION: the number of observations for each individual in
             x cannot be smaller than the length of samples, T.")
     beta <- as.matrix(theta$beta)
+    
     p <- nrow(beta)
-    x <- rbind(matrix(rep(NaN, (nrow(initial.y.set)*q)), ncol = q),
-               as.matrix(x[(nrow(z) - T + 1):(nrow(z)),]))
+    pN <- p * N
+    x <- rbind(matrix(rep(NaN, (nrow(initial.y.set)*pN)), ncol = pN),
+               as.matrix(x[(nrow(x) - T + 1):(nrow(x)),]))
 
   }
   if (is.null(z))
@@ -142,8 +144,10 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
       stop("EXCEPTION: the number of observations for each individual in
             z cannot be smaller than the length of samples, T.")
     gamma <- as.matrix(theta$gamma)
+
     q <- nrow(gamma)
-    z <- rbind(matrix(rep(NaN, (nrow(initial.y.set)*q)), ncol = q),
+    qN <- q * N
+    z <- rbind(matrix(rep(NaN, (nrow(initial.y.set)*qN)), ncol = qN),
                as.matrix(z[(nrow(z) - T + 1):(nrow(z)),]))
   }
 
@@ -193,8 +197,12 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
   lagged.and.sample <- apply(y, 2, GetLaggedAndSample, s)
   y.sample <- sapply(lagged.and.sample, "[[", "y.sample")
   y.lagged <- matrix(sapply(lagged.and.sample, "[[", "y.lagged"), nrow = T)
-
+  x <- as.matrix(x[(nrow(x) - T + 1):(nrow(x)),])
+  z <- as.matrix(z[(nrow(z) - T + 1):(nrow(z)),])
+  
   return (list(y = y,
+               x = x,
+               z = z,
                y.sample = y.sample,
                y.lagged = y.lagged,
                components = components,
