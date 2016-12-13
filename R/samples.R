@@ -124,7 +124,7 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
   else
   {
     x <- as.matrix(x)
-    if (T > ncol(x))
+    if (T > nrow(x))
       stop("EXCEPTION: the number of observations for each individual in
             x cannot be smaller than the length of samples, T.")
     beta <- as.matrix(theta$beta)
@@ -140,7 +140,7 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
   else
   {
     z <- as.matrix(z)
-    if (T > ncol(z))
+    if (T > nrow(z))
       stop("EXCEPTION: the number of observations for each individual in
             z cannot be smaller than the length of samples, T.")
     gamma <- as.matrix(theta$gamma)
