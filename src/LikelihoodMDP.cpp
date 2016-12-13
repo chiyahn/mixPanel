@@ -9,10 +9,10 @@ using namespace Rcpp;
 
 const double LOG2PI_OVERTWO = 0.91893853320467274178; // (log(2*pi) / 2)
 
-// Returns likelihood of univariate MS-AR model where rho is switching.
+// Returns likelihood of univariate MDP models where rho is switching.
 // Note that even if rho is non-switching, setting rho as a s by M matrix with
 // repeated column of the original rho will give you the likelihood for
-// MS-AR model with non-switching rho.
+// MDP model with non-switching rho.
 // [[Rcpp::export]]
 SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 					Rcpp::NumericMatrix y_lagged_rcpp,
@@ -43,7 +43,6 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 	arma::colvec sigma(sigma_rcpp.begin(), sigma_rcpp.size(), false);
 	arma::mat    rho(rho_rcpp.begin(),
                    rho_rcpp.nrow(), rho_rcpp.ncol(), false);
-
 	arma::mat    beta(beta_rcpp.begin(),
 								beta_rcpp.nrow(),
 								beta_rcpp.ncol(), false);
@@ -58,6 +57,11 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 	int q = gamma.n_rows;
 
   double likelihood = 0;
+  double* sigma_to_T = new double[M]; // WATCH: H case
+
+	// compute sigma_j^T first.
+	for (int j = 0; j < M; j++)
+		sigma_to_T[j] = std::pow(sigma(j), T);
 
 	// partition blocks
 	arma::mat* y_lagged_blocks = new arma::mat[N];
@@ -108,7 +112,7 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 				min_index = j;
 			}
 
-			ratios[j] = alpha(j) / sigma(j);
+			ratios[j] = alpha(j) / sigma_to_T[j];
 		}
 
 		// minimum back
@@ -135,6 +139,9 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 	delete[] y_lagged_blocks;
 	delete[] x_blocks;
 	delete[] z_blocks;
+
+	// clear memory for sigma_j^T
+	delete[] sigma_to_T;
 
 	return (wrap(likelihood));
 }
