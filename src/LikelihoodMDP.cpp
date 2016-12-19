@@ -1,5 +1,5 @@
 /*
-// Compute likelihood of MDP models.
+// Compute likelihood of MDP models, assuming that initial values y_0 are fixed.
 // Author: Chiyoung Ahn
 */
 
@@ -57,11 +57,11 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 	int q = gamma.n_rows;
 
   double likelihood = 0;
-  double* sigma_to_T = new double[M]; // WATCH: H case
+	double* ratios = new double[M]; // WATCH: H case
 
-	// compute sigma_j^T first.
+	// compute ratios first.
 	for (int j = 0; j < M; j++)
-		sigma_to_T[j] = std::pow(sigma(j), T);
+		ratios[j] = alpha(j) / std::pow(sigma(j), T); // WATCH: H case
 
 	// partition blocks
 	arma::mat* y_lagged_blocks = new arma::mat[N];
@@ -84,7 +84,6 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 		// possible numerical errors when computing posterior probs.
 		int min_index = -1;
 		double min_value = std::numeric_limits<double>::infinity();
-		double* ratios = new double[M];
 		double* likelihoods_i = new double[M];
 		double likelihood_i = 0;
 
@@ -111,8 +110,6 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 				min_value = likelihoods_i[j];
 				min_index = j;
 			}
-
-			ratios[j] = alpha(j) / sigma_to_T[j];
 		}
 
 		// minimum back
@@ -128,7 +125,6 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 
 		likelihood += log(likelihood_i) - min_value + log(ratios[min_index]);
 
-		delete[] ratios;
 		delete[] likelihoods_i; // clear memory
 	}
 
@@ -140,8 +136,8 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 	delete[] x_blocks;
 	delete[] z_blocks;
 
-	// clear memory for sigma_j^T
-	delete[] sigma_to_T;
+	// clear memory for ratios
+	delete[] ratios;
 
 	return (wrap(likelihood));
 }
