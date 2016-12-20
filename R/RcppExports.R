@@ -9,6 +9,14 @@ LikelihoodMDPInitialFixed <- function(y_rcpp, y_lagged_rcpp, x_rcpp, z_rcpp, alp
     .Call('mixPanel_LikelihoodMDPInitialFixed', PACKAGE = 'mixPanel', y_rcpp, y_lagged_rcpp, x_rcpp, z_rcpp, alpha_rcpp, mu_rcpp, sigma_rcpp, rho_rcpp, beta_rcpp, gamma_rcpp)
 }
 
+LikelihoodsMDP <- function(y_rcpp, y_lagged_rcpp, x_rcpp, z_rcpp, alpha_rcpp, mu_rcpp, sigma_rcpp, rho_rcpp, beta_rcpp, gamma_rcpp) {
+    .Call('mixPanel_LikelihoodsMDP', PACKAGE = 'mixPanel', y_rcpp, y_lagged_rcpp, x_rcpp, z_rcpp, alpha_rcpp, mu_rcpp, sigma_rcpp, rho_rcpp, beta_rcpp, gamma_rcpp)
+}
+
+LikelihoodsMDPInitialFixed <- function(y_rcpp, y_lagged_rcpp, x_rcpp, z_rcpp, alpha_rcpp, mu_rcpp, sigma_rcpp, rho_rcpp, beta_rcpp, gamma_rcpp) {
+    .Call('mixPanel_LikelihoodsMDPInitialFixed', PACKAGE = 'mixPanel', y_rcpp, y_lagged_rcpp, x_rcpp, z_rcpp, alpha_rcpp, mu_rcpp, sigma_rcpp, rho_rcpp, beta_rcpp, gamma_rcpp)
+}
+
 PosteriorMDP <- function(y_rcpp, y_lagged_rcpp, x_rcpp, z_rcpp, alpha_rcpp, mu_rcpp, sigma_rcpp, rho_rcpp, beta_rcpp, gamma_rcpp) {
     .Call('mixPanel_PosteriorMDP', PACKAGE = 'mixPanel', y_rcpp, y_lagged_rcpp, x_rcpp, z_rcpp, alpha_rcpp, mu_rcpp, sigma_rcpp, rho_rcpp, beta_rcpp, gamma_rcpp)
 }
