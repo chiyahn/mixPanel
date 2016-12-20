@@ -1,5 +1,7 @@
 EstimateMDP.MLE.nloptr <- function(thetas, y, y.lagged, 
                                x, z,
+                               is.rho.switching = TRUE,
+                               is.sigma.switching = TRUE,
                                epsilon = 0.001, maxit = 500,
                                sigma.min = 0.05, alpha.eps = 10e-4,
                                initial.fixed = FALSE)
