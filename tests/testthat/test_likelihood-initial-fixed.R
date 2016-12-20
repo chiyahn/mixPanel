@@ -1,12 +1,12 @@
-context("Likelihood estimation")
+context("Likelihood estimation, initial values are fixed")
 
-test_that("LikelihoodMDP", {
+test_that("LikelihoodMDPInitialFixed", {
   
   set.seed(1234)
   s1 <- 0
-  s2 <- 1
-  N.fixed <- 2
-  T.fixed <- 5
+  s2 <- 3
+  N.fixed <- 30
+  T.fixed <- 20
   p <- 2
   q <- 3
   x <- matrix(runif(T.fixed * N.fixed * p), nrow = T.fixed)
@@ -35,7 +35,7 @@ test_that("LikelihoodMDP", {
   sample9 <- GenerateMDPSample(theta9, N = N.fixed, T = T.fixed, x = x, z = z)
   sample10 <- GenerateMDPSample(theta10, N = N.fixed, T = T.fixed, x = x, z = z)
   
-  LikelihoodMDP.wrapper <- function(sample, x, z)
+  LikelihoodMDPInitialFixed.wrapper <- function(sample, x, z)
   {
     theta <- (sample$MDP.model)$theta
     M <- length(theta$alpha)
@@ -49,40 +49,25 @@ test_that("LikelihoodMDP", {
     if (!is.null(theta$gamma))
       gamma <- theta$gamma
     
-    likelihood <- LikelihoodMDP(sample$y.sample, 
-                                sample$y.lagged, x, z,
-                                c(theta$alpha), c(theta$mu), c(theta$sigma),
-                                rho, beta, c(gamma))
-    likelihood.initial.fixed <- NULL
-    if (is.null(sample$MDP.model$theta$rho)) # if s = 0
-      likelihood.initial.fixed <- LikelihoodMDPInitialFixed(sample$y.sample, 
-                                  sample$y.lagged, x, z,
-                                  c(theta$alpha), c(theta$mu), c(theta$sigma),
-                                  rho, beta, c(gamma))
-    list(likelihood = likelihood, 
-         likelihood.initial.fixed = likelihood.initial.fixed,
-         sample = sample)
+    LikelihoodMDPInitialFixed(sample$y.sample, sample$y.lagged, x, z,
+                  c(theta$alpha), c(theta$mu), c(theta$sigma),
+                  rho, beta, c(gamma))
   }
   
-  SanityCheck <- function(wrapped)
+  SanityCheck <- function(likelihood)
   {
-    # check if likelihood is valid.
-    expect_less_than(wrapped$likelihood, 0)
-    
-    # check if likelihoods are same for the case when s = 0
-    if (is.null(wrapped$sample$MDP.model$theta$rho))
-      expect_equal(wrapped$likelihood, wrapped$likelihood.initial.fixed)
+    expect_less_than(likelihood, 0)
   }
   
-  SanityCheck(LikelihoodMDP.wrapper(sample1, x.empty, z.empty))
-  SanityCheck(LikelihoodMDP.wrapper(sample2, x.empty, z.empty))
-  SanityCheck(LikelihoodMDP.wrapper(sample3, x.empty, z.empty))
-  SanityCheck(LikelihoodMDP.wrapper(sample4, x.empty, z.empty))
-  SanityCheck(LikelihoodMDP.wrapper(sample5, x, z.empty))
-  SanityCheck(LikelihoodMDP.wrapper(sample6, x, z.empty))
-  SanityCheck(LikelihoodMDP.wrapper(sample7, x.empty, z))
-  SanityCheck(LikelihoodMDP.wrapper(sample8, x.empty, z))
-  SanityCheck(LikelihoodMDP.wrapper(sample9, x, z))
-  SanityCheck(LikelihoodMDP.wrapper(sample10, x, z))
+  SanityCheck(LikelihoodMDPInitialFixed.wrapper(sample1, x.empty, z.empty))
+  SanityCheck(LikelihoodMDPInitialFixed.wrapper(sample2, x.empty, z.empty))
+  SanityCheck(LikelihoodMDPInitialFixed.wrapper(sample3, x.empty, z.empty))
+  SanityCheck(LikelihoodMDPInitialFixed.wrapper(sample4, x.empty, z.empty))
+  SanityCheck(LikelihoodMDPInitialFixed.wrapper(sample5, x, z.empty))
+  SanityCheck(LikelihoodMDPInitialFixed.wrapper(sample6, x, z.empty))
+  SanityCheck(LikelihoodMDPInitialFixed.wrapper(sample7, x.empty, z))
+  SanityCheck(LikelihoodMDPInitialFixed.wrapper(sample8, x.empty, z))
+  SanityCheck(LikelihoodMDPInitialFixed.wrapper(sample9, x, z))
+  SanityCheck(LikelihoodMDPInitialFixed.wrapper(sample10, x, z))
   
 })

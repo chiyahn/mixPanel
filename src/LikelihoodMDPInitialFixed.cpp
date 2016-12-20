@@ -1,5 +1,5 @@
 /*
-// Compute likelihood of MDP models, assuming that s = 1.
+// Compute likelihood of MDP models, assuming that initial values y_0 are fixed.
 // Author: Chiyoung Ahn
 */
 
@@ -12,9 +12,9 @@ const double LOG2PI_OVERTWO = 0.91893853320467274178; // (log(2*pi) / 2)
 // Returns likelihood of univariate MDP models where rho is switching.
 // Note that even if rho is non-switching, setting rho as a s by M matrix with
 // repeated column of the original rho will give you the likelihood for
-// MDP model with non-switching rho. Assume initial values are random, s = 1.
+// MDP model with non-switching rho. Assume initial values are fixed.
 // [[Rcpp::export]]
-SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
+SEXP LikelihoodMDPInitialFixed (Rcpp::NumericMatrix y_rcpp,
 					Rcpp::NumericMatrix y_lagged_rcpp,
 					Rcpp::NumericMatrix x_rcpp,
 					Rcpp::NumericMatrix z_rcpp,
@@ -61,9 +61,7 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 
 	// compute ratios first.
 	for (int j = 0; j < M; j++)
-		ratios[j] = alpha(j) / // WATCH: H case, y0 random, s=1
-			(std::pow(sigma(j), T) *
-			std::sqrt(1 - rho.at(0,j) * rho.at(0,j)));
+		ratios[j] = alpha(j) / std::pow(sigma(j), T); // WATCH: H case
 
 	// partition blocks
 	arma::mat* y_lagged_blocks = new arma::mat[N];
@@ -93,22 +91,9 @@ SEXP LikelihoodMDP (Rcpp::NumericMatrix y_rcpp,
 		for (int j = 0; j < M; j++)
 		{
 			likelihoods_i[j] = 0;
-
-			// 1. compute likelihood for initial observations first.
-			arma::colvec likelihood_ijt = y(0,i) -
-				(x_blocks[i].row(0) * beta.col(j) +
-				z_blocks[i].row(0) * gamma + mu(j)) /
-				(1 - rho.at(0,j)); // explicit gluing
-
-			likelihood_ijt *= likelihood_ijt;
-
-			// you can subtract SQRT2PI in the final log-likelihood. // WATCH: s = 1
-			likelihoods_i[j] += likelihood_ijt(0) / (1 - rho.at(0,j) * rho.at(0,j));
-
-			// 2. compute likelihood for t > 1.
-			for (int t = 1; t < T; t++)
+			for (int t = 0; t < T; t++)
 			{
-				likelihood_ijt = y(t,i) -
+				arma::colvec likelihood_ijt = y(t,i) -
 					y_lagged_blocks[i].row(t) * rho.col(j) -
 		      x_blocks[i].row(t) * beta.col(j) -
 		      z_blocks[i].row(t) * gamma - mu(j); // explicit gluing
