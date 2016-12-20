@@ -30,3 +30,21 @@ GetLaggedColumn <- function (j, col, s) {
     col <- col[-(0:(s-j))] # destroy first s-j elements
   return (col[1:(length(col)-j)])
 }
+
+#' @description Transform a theta to a reduced column, ordered in
+#' alpha, mu, sigma, rho, beta, gamma. 
+#' @title MDPThetaToReducedColumn
+#' @name MDPThetaToReducedColumn
+#' @param theta A list that represents the parameters of a model.
+#' @return A column that is that represents the parameter.
+MDPThetaToReducedColumn <- function(theta)
+{
+  M <- length(theta$alpha)
+  if (M < 2) # if M = 1, alpha part is gone as it is always one.
+    return (c(c(theta$mu), c(theta$sigma),
+              c(theta$rho), c(theta$beta), c(theta$gamma)))
+  
+  reduced.alpha <- theta$alpha[1:(M-1)]
+  return (c(c(reduced.alpha), c(theta$mu), c(theta$sigma),
+            c(theta$rho), c(theta$beta), c(theta$gamma)))
+}

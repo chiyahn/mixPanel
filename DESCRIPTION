@@ -7,6 +7,6 @@ Author: Chiyoung Ahn
 Maintainer: Chiyoung Ahn <chiyahn@alumni.ubc.ca>
 Description: R package for parametric finite mixture dynamic panel models (MDP).
 License: GPL (>= 2)
-Imports: RcppArmadillo, Rcpp (>= 0.12.5), testthat, reshape, ggplot2
+Imports: RcppArmadillo, Rcpp (>= 0.12.5), testthat, reshape, ggplot2, nloptr
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 5.0.1
