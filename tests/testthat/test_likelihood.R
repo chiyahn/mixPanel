@@ -5,7 +5,7 @@ test_that("LikelihoodMDP", {
   set.seed(1234)
   s1 <- 0
   s2 <- 1
-  N.fixed <- 2
+  N.fixed <- 50
   T.fixed <- 5
   p <- 2
   q <- 3

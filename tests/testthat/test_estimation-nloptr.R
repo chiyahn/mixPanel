@@ -39,16 +39,6 @@ test_that("using nloptr", {
   {
     theta <- (sample$MDP.model)$theta
     M <- length(theta$alpha)
-    rho <- t(as.matrix(rep(0,M)))
-    beta <- t(as.matrix(rep(0,M)))
-    gamma <- as.matrix(0)
-    if (!is.null(theta$rho))
-      rho <- theta$rho
-    if (!is.null(theta$beta))
-      beta <- theta$beta
-    if (!is.null(theta$gamma))
-      gamma <- theta$gamma
-    
     nloptr.result <- EstimateMDP.MLE.nloptr(thetas = list(theta),
                                             y = sample$y.sample, y.lagged = sample$y.lagged, 
                                             x = x, z = z, initial.fixed = FALSE)
@@ -60,6 +50,16 @@ test_that("using nloptr", {
       x <- x.empty
     if (is.null(z))
       z <- z.empty
+    
+    rho <- t(as.matrix(rep(0,M)))
+    beta <- t(as.matrix(rep(0,M)))
+    gamma <- as.matrix(0)
+    if (!is.null(theta$rho))
+      rho <- theta$rho
+    if (!is.null(theta$beta))
+      beta <- theta$beta
+    if (!is.null(theta$gamma))
+      gamma <- theta$gamma
     
     likelihood <- LikelihoodMDP(sample$y.sample, 
                                 sample$y.lagged, x, z,

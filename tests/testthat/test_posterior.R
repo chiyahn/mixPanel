@@ -64,11 +64,17 @@ test_that("PosteriorMDP", {
   
   SanityCheck <- function(wrapped)
   {
+    M <- length(wrapped$sample$MDP.model$theta$alpha)
     # check if posteriors are valid
     for (i in 1:N.fixed)
     {
       expect_equal(sum(wrapped$posterior[i,]), 1)
       expect_equal(sum(wrapped$posterior.initial.fixed[i,]), 1)
+      for (j in 1:M)
+      {
+        expect_gt(wrapped$posterior[i,j], 0)
+        expect_gt(wrapped$posterior.initial.fixed[i,j], 0)
+      }
     }
     
   }
