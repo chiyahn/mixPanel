@@ -57,8 +57,16 @@ test_that("PosteriorMDP", {
                                 sample$y.lagged, x, z,
                                 c(theta$alpha), c(theta$mu), c(theta$sigma),
                                 rho, beta, c(gamma))
+    posterior.R <- EstimateMDPPosteriors(theta = theta, 
+                                             y = sample$y.sample, y.lagged = sample$y.lagged,
+                                             x = x, z = z, initial.fixed = FALSE)
+    posterior.initial.fixed.R <- EstimateMDPPosteriors(theta = theta, 
+                                 y = sample$y.sample, y.lagged = sample$y.lagged,
+                                x = x, z = z, initial.fixed = TRUE)
     list(posterior = posterior, 
          posterior.initial.fixed = posterior.initial.fixed,
+         posterior.R = posterior.R,
+         posterior.initial.fixed.R = posterior.initial.fixed.R,
          sample = sample)
   }
   
@@ -74,6 +82,9 @@ test_that("PosteriorMDP", {
       {
         expect_gt(wrapped$posterior[i,j], 0)
         expect_gt(wrapped$posterior.initial.fixed[i,j], 0)
+        expect_equal(wrapped$posterior[i,j], wrapped$posterior.R[i,j])
+        expect_equal(wrapped$posterior.initial.fixed[i,j], 
+                     wrapped$posterior.initial.fixed.R[i,j])
       }
     }
     
