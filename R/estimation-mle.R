@@ -161,7 +161,9 @@ EstimateMDP.MLE.nloptr <- function(thetas, y, y.lagged,
     ub <- c(ub, rep(Inf, (length(theta.vectorized) - length(ub))))
     
     # sanity check for derivatives.
-    if (!NLOPTRSanityCheck(x0 = theta.vectorized, fn = ObjectiveLogLikelihood))
+    if (!NLOPTRSanityCheck(x0 = theta.vectorized, 
+                           fn = ObjectiveLogLikelihood,
+                           lb = lb, ub = ub))
       return (list (convergence = -Inf, value = -Inf))
     
     result <- nloptr::slsqp(theta.vectorized,
@@ -191,8 +193,10 @@ EstimateMDP.MLE.nloptr <- function(thetas, y, y.lagged,
                succeeded = TRUE))
 }
 
-NLOPTRSanityCheck <- function (x0, fn)
+NLOPTRSanityCheck <- function (x0, fn, lb, ub)
 {
+  if (any(x0 > ub) || any(x0 < lb))
+    return (FALSE)
   # sanity check for derivatives
   heps <- .Machine$double.eps^(1/3) # epsilon used in nloptr package
   n <- length(x0)
