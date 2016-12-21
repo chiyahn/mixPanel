@@ -2,6 +2,7 @@
 #' @export
 #' @title EstimateMDPFisher
 #' @name EstimateMDPFisher
+#' @param theta A list that represents the parameters of a model.
 #' @param y (T-s) by N matrix that represents observed y variables 
 #' @param y.lagged (T-s) by (N*min(1,s)) matrix that represents lagged y variables
 #' @param x (T-s) by (N*p) matrix that represents observed exogeneous variables
