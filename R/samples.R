@@ -207,9 +207,9 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
               individual.effect = individual.effect,
               time.effect = time.effect,
               y = y,
-              log.likelihood = 1,
-              aic = Inf, bic = Inf,
+              fisher.estimated = NULL,
               components = components,
+              log.likelihood = 1,
               label = "MDP.model")
   class(model) <- "MDP.model"
   
