@@ -73,6 +73,8 @@ GenerateMDPTheta <- function(M = 2, s = 0, p = 0, q = 0)
 #' have switching coefficeints.
 #' @param z n by p matrix of data for exogenous variables that
 #' have non-switching coefficeints.
+#' @param individual.effect determines if individual-specific effects are present.
+#' @param time.effect determines if time-specific effects are present.
 #' @return A list with items:
 #' \item{y}{(T + length(initial.y.set)) by N matrix that represents a sample
 #' appended with previous values used to estimate autoregressive terms}
@@ -90,7 +92,9 @@ GenerateMDPTheta <- function(M = 2, s = 0, p = 0, q = 0)
 #' GenerateMDPSample(theta, N = 200)
 GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
                            initial.y.set = NULL,
-                           x = NULL, z = NULL)
+                           x = NULL, z = NULL, 
+                           individual.effect = FALSE, 
+                           time.effect = FALSE)
 {
   if (is.null(theta))
     theta <- GenerateMDPTheta()
@@ -100,13 +104,20 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
   rho <- matrix(rep(0,M), ncol = M)
   beta <- matrix(rep(0,M), ncol = M)
   gamma <- as.matrix(0)
-  
+
   if (!is.null(theta$rho))
     rho <- as.matrix(theta$rho)
   
   s <- nrow(rho)
   p <- 1
   q <- 1
+  
+  individual.effects <- rep(0,N)
+  time.effects <- rep(0,(T+s))
+  if (individual.effect)
+    individual.effects <- rnorm(N)
+  if (time.effect)
+    time.effects <- rnorm((T+s))
 
   if (is.null(initial.y.set))
     initial.y.set <- matrix(rnorm((N * s)), ncol = N)
@@ -178,18 +189,29 @@ GenerateMDPSample <- function(theta = NULL, N = 40, T = 5,
     x.block <- matrix(x[,x.block.first:(x.block.first + p - 1)], ncol = p)
     z.block <- matrix(z[,z.block.first:(z.block.first + q - 1)], ncol = q)
     for (t in initial.index:last.index)
+    {
       y[t,i] <- rnorm(1, mu[component,1], sd=sigma[component,1]) +
         t(rev(y[(t-s):(t-1),i])) %*% as.numeric(rho[,component]) +
         x.block[t,] %*% as.matrix(beta[,component]) +
-        z.block[t,] %*% as.matrix(gamma)
+        z.block[t,] %*% as.matrix(gamma) + 
+        individual.effects[i] + time.effects[t]
+    }
   }
+  
+  theta.expended <- theta
+  if (individual.effect || time.effect)
+    theta.expended$gamma <- c(theta$gamma, individual.effects, time.effects)
 
   model <- list(theta = theta,
-                y = y,
-                 log.likelihood = 1,
-                 aic = Inf, bic = Inf,
-                 components = components,
-                 label = "MDP.model")
+              theta.expended = theta.expended,
+              individual.effect = individual.effect,
+              time.effect = time.effect,
+              y = y,
+              log.likelihood = 1,
+              aic = Inf, bic = Inf,
+              components = components,
+              label = "MDP.model")
+  class(model) <- "MDP.model"
   
   s <- ifelse(is.null(theta$rho), 0, nrow(theta$rho)) # take original rho back
 
