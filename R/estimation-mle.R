@@ -3,7 +3,7 @@ EstimateMDP.MLE.nloptr <- function(thetas, y, y.lagged,
                                is.rho.switching = TRUE,
                                is.sigma.switching = TRUE,
                                epsilon = 0.001, maxit = 500,
-                               sigma.min = 0.05, alpha.eps = 10e-4,
+                               sigma.min = 0.05, alpha.eps = 1e-2,
                                initial.fixed = FALSE)
 {
   # assume that rho/sigma is different across components.
@@ -24,7 +24,7 @@ EstimateMDP.MLE.nloptr <- function(thetas, y, y.lagged,
   if (is.null(theta$beta))
     x <- matrix(rep(0,(T * N)), ncol = N)
   else
-    p <- nrow(theta$beta)
+    p <- nrow(as.matrix(theta$beta))
 
   if (is.null(theta$gamma))
     z <- matrix(rep(0,(T * N)), ncol = N)
@@ -150,7 +150,7 @@ EstimateMDP.MLE.nloptr <- function(thetas, y, y.lagged,
     rho.ub <- NULL
     if (s > 0) 
     {
-      rho <- theta.vectorized[rho.index:(gamma.index - 1)]
+      rho <- theta.vectorized[rho.index:(beta.index - 1)]
       rho.lb <- pmin(-1, rho * (1 - 0.5 * sign(rho)))
       rho.ub <- pmax(1, rho * (1 + 0.5 * sign(rho)))
     }
